@@ -18,7 +18,7 @@ public enum DeviceHighlightCache {
         for (var d : rawDevices) {
             devices.add(new DeviceHighlightInfo(
                     d.pos(), d.deviceTypeOrdinal(), d.deviceName(),
-                    d.networkName(), d.networkColor(), d.energyUsagePercent(),
+                    d.networkName(), d.networkColor(), d.energyStatus(),
                     d.isCurrentNetwork(), now));
         }
     }

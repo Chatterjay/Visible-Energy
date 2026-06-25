@@ -3,6 +3,7 @@ package org.chatterjay.visible_energy.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.logging.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.chatterjay.visible_energy.config.VEConfig;
 import org.chatterjay.visible_energy.network.payloads.S2CDeviceHighlightData;
 import org.chatterjay.visible_energy.network.payloads.S2CDeviceHighlightData.DeviceInfo;
+import org.slf4j.Logger;
 
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.FluxDeviceType;
@@ -32,6 +34,8 @@ import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.register.DataAttachments;
 
 public class VECommand {
+    private static final Logger LOG = LogUtils.getLogger();
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         var cmd = Commands.literal("visible_energy")
                 .executes(ctx -> executeScan(ctx.getSource(), VEConfig.SCAN_RADIUS.get()))
@@ -83,9 +87,16 @@ public class VECommand {
                     if (network == null || !network.isValid()) return;
 
                     NetworkStatistics stats = network.getStatistics();
-                    float usagePercent = 0f;
-                    if (stats != null && stats.totalEnergy > 0) {
-                        usagePercent = (float) stats.totalBuffer / stats.totalEnergy * 100f;
+                    String energyStatus = formatEnergyStatus(stats);
+
+                    if (stats != null) {
+                        LOG.info(
+                                "[VE] Stats for network '{}': buffer={} energy={} input={} output={}",
+                                network.getNetworkName(), stats.totalBuffer, stats.totalEnergy,
+                                stats.energyInput, stats.energyOutput);
+                    } else {
+                        LOG.warn("[VE] NetworkStatistics is null for network '{}'",
+                                network.getNetworkName());
                     }
 
                     boolean isCurrent;
@@ -109,7 +120,7 @@ public class VECommand {
                             customName,
                             network.getNetworkName(),
                             resolveNetworkColor(network.getNetworkColor()),
-                            usagePercent,
+                            energyStatus,
                             isCurrent));
                 });
             }
@@ -132,6 +143,35 @@ public class VECommand {
         } catch (Exception ignored) {
         }
         return FluxConstants.INVALID_NETWORK_ID;
+    }
+
+    private static String formatEnergyStatus(NetworkStatistics stats) {
+        if (stats == null) return "---";
+
+        long transferRate = stats.energyOutput > 0 ? stats.energyOutput : stats.energyInput;
+        StringBuilder sb = new StringBuilder();
+        sb.append(compactEnergy(transferRate)).append("/t");
+
+        // totalEnergy in NetworkStatistics = sum of storage devices' transfer buffer
+        if (stats.totalEnergy > 0) {
+            sb.append(" | ").append(compactEnergy(stats.totalEnergy)).append(" stored");
+        }
+
+        return sb.toString();
+    }
+
+    private static String compactEnergy(long value) {
+        if (value <= 0) return "0 FE";
+        if (value >= 1_000_000_000_000L) {
+            return String.format("%.1f TFE", value / 1_000_000_000_000f);
+        } else if (value >= 1_000_000_000L) {
+            return String.format("%.1f GFE", value / 1_000_000_000f);
+        } else if (value >= 1_000_000L) {
+            return String.format("%.1f MFE", value / 1_000_000f);
+        } else if (value >= 1_000L) {
+            return String.format("%.1f kFE", value / 1_000f);
+        }
+        return String.format("%d FE", value);
     }
 
     private static int resolveNetworkColor(int colorIndex) {

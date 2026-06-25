@@ -123,10 +123,8 @@ public class DeviceHighlightRenderer {
         int textColor = (alpha << 24) | rgb;
 
         String line1 = info.getDeviceName() + (info.isCurrentNetwork() ? " *" : "");
-        String line2 = String.format("%s | %.1f%%", info.getNetworkName(),
-                info.getEnergyUsagePercent());
+        String line2 = info.getNetworkName() + " | " + info.getEnergyStatus();
 
-        // Match SFM's drawLabelsForPos pattern exactly
         poseStack.pushPose();
         poseStack.translate(pos.getX() + 0.5, pos.getY() + 2.2, pos.getZ() + 0.5);
         poseStack.mulPose(camera.rotation());

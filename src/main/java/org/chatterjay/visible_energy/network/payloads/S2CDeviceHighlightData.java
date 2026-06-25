@@ -20,7 +20,7 @@ public record S2CDeviceHighlightData(List<DeviceInfo> devices) implements Custom
             StreamCodec.ofMember(S2CDeviceHighlightData::write, S2CDeviceHighlightData::new);
 
     public record DeviceInfo(BlockPos pos, int deviceTypeOrdinal, String deviceName,
-                             String networkName, int networkColor, float energyUsagePercent,
+                             String networkName, int networkColor, String energyStatus,
                              boolean isCurrentNetwork) {}
 
     public S2CDeviceHighlightData(FriendlyByteBuf buf) {
@@ -35,7 +35,7 @@ public record S2CDeviceHighlightData(List<DeviceInfo> devices) implements Custom
             buf.writeUtf(d.deviceName(), 100);
             buf.writeUtf(d.networkName(), 100);
             buf.writeInt(d.networkColor());
-            buf.writeFloat(d.energyUsagePercent());
+            buf.writeUtf(d.energyStatus(), 50);
             buf.writeBoolean(d.isCurrentNetwork());
         }
     }
@@ -49,9 +49,10 @@ public record S2CDeviceHighlightData(List<DeviceInfo> devices) implements Custom
             String deviceName = buf.readUtf(100);
             String networkName = buf.readUtf(100);
             int color = buf.readInt();
-            float pct = buf.readFloat();
+            String energyStatus = buf.readUtf(50);
             boolean isCurrent = buf.readBoolean();
-            list.add(new DeviceInfo(pos, typeOrdinal, deviceName, networkName, color, pct, isCurrent));
+            list.add(new DeviceInfo(pos, typeOrdinal, deviceName, networkName, color, energyStatus,
+                    isCurrent));
         }
         return list;
     }
