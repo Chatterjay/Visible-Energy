@@ -156,9 +156,19 @@ public class VECommand {
                                 loaded ? "visible_energy.cross_dimension.loaded"
                                         : "visible_energy.cross_dimension.unloaded")
                                 .withStyle(loaded ? ChatFormatting.GREEN : ChatFormatting.RED);
-                        alerts.add(Component.translatable(
-                                "visible_energy.cross_dimension.entry",
-                                deviceType, coords, dim, status));
+                        alerts.add(Component.literal("  ")
+                                .append(Component.literal(conn.getDeviceType().name())
+                                        .withStyle(ChatFormatting.GOLD))
+                                .append(Component.literal(" at ").withStyle(ChatFormatting.GRAY))
+                                .append(Component.literal(
+                                        p.getX() + "," + p.getY() + "," + p.getZ())
+                                        .withStyle(ChatFormatting.AQUA))
+                                .append(Component.literal(" in ").withStyle(ChatFormatting.GRAY))
+                                .append(Component.literal(dimName)
+                                        .withStyle(ChatFormatting.GREEN))
+                                .append(Component.literal(" [").withStyle(ChatFormatting.GRAY))
+                                .append(status)
+                                .append(Component.literal("]").withStyle(ChatFormatting.GRAY)));
                     }
                 });
             }
