@@ -16,7 +16,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.core.BlockPos;
@@ -27,6 +31,8 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.chatterjay.visible_energy.client.DeviceHighlightCache;
 import org.chatterjay.visible_energy.data.DeviceHighlightInfo;
 import org.joml.Matrix4f;
+
+import sonar.fluxnetworks.api.device.FluxDeviceType;
 
 public class DeviceHighlightRenderer {
 
@@ -88,7 +94,7 @@ public class DeviceHighlightRenderer {
             int r = (rgb >> 16) & 0xFF;
             int g = (rgb >> 8) & 0xFF;
             int b = rgb & 0xFF;
-            int a = info.isCurrentNetwork() ? 50 : 20;
+            int a = info.isCurrentNetwork() ? 100 : 50;
             renderBoxFill(fillConsumer, poseMatrix, pos, r, g, b, a);
         }
         bufferSource.endBatch(OVERLAY_NO_DEPTH);
@@ -104,6 +110,40 @@ public class DeviceHighlightRenderer {
             int b = rgb & 0xFF;
             int a = info.isCurrentNetwork() ? 220 : 120;
             renderBoxOutline(lineConsumer, poseMatrix, poseEntry, pos, r, g, b, a);
+        }
+        bufferSource.endBatch(RenderType.lines());
+
+        // Pass 2.5: network connection lines (PLUG → other devices only)
+        Map<Integer, List<BlockPos>> plugsByNetwork = new HashMap<>();
+        Map<Integer, List<BlockPos>> othersByNetwork = new HashMap<>();
+        Map<Integer, Integer> networkColors = new HashMap<>();
+        for (DeviceHighlightInfo info : highlights) {
+            int netId = info.getNetworkId();
+            networkColors.putIfAbsent(netId, info.getNetworkColor());
+            if (info.getDeviceType() == FluxDeviceType.PLUG) {
+                plugsByNetwork.computeIfAbsent(netId, k -> new ArrayList<>()).add(info.getPos());
+            } else {
+                othersByNetwork.computeIfAbsent(netId, k -> new ArrayList<>()).add(info.getPos());
+            }
+        }
+        VertexConsumer netLineConsumer = bufferSource.getBuffer(RenderType.lines());
+        for (int netId : plugsByNetwork.keySet()) {
+            List<BlockPos> plugs = plugsByNetwork.get(netId);
+            List<BlockPos> others = othersByNetwork.get(netId);
+            if (plugs.isEmpty() || others == null || others.isEmpty()) continue;
+            int rgb = networkColors.getOrDefault(netId, 0xFFFFFF);
+            int lr = (rgb >> 16) & 0xFF;
+            int lg = (rgb >> 8) & 0xFF;
+            int lb = rgb & 0xFF;
+            int la = 140;
+            for (BlockPos plugPos : plugs) {
+                for (BlockPos otherPos : others) {
+                    line(netLineConsumer, poseMatrix, poseEntry,
+                            plugPos.getX() + 0.5f, plugPos.getY() + 0.5f, plugPos.getZ() + 0.5f,
+                            otherPos.getX() + 0.5f, otherPos.getY() + 0.5f, otherPos.getZ() + 0.5f,
+                            lr / 255f, lg / 255f, lb / 255f, la / 255f);
+                }
+            }
         }
         bufferSource.endBatch(RenderType.lines());
 
@@ -125,7 +165,8 @@ public class DeviceHighlightRenderer {
                                      Camera camera, DeviceHighlightInfo info) {
         BlockPos pos = info.getPos();
         int alpha = info.isCurrentNetwork() ? 0xFF : 0xCC;
-        int textColor = (alpha << 24) | 0xFFFFFF;
+        int rgb = getLabelColor(info);
+        int textColor = (alpha << 24) | rgb;
 
         String line1 = info.getDeviceName() + (info.isCurrentNetwork() ? " *" : "");
         String line2 = info.getNetworkName() + " | " + info.getEnergyStatus();
@@ -151,6 +192,22 @@ public class DeviceHighlightRenderer {
                 Font.DisplayMode.SEE_THROUGH, 0, LightTexture.FULL_BRIGHT);
 
         poseStack.popPose();
+    }
+
+    private static int getLabelColor(DeviceHighlightInfo info) {
+        FluxDeviceType type = info.getDeviceType();
+        int proportion = info.getProportionPercent();
+
+        // Green for energy input (plugs, storage charging)
+        if (type == FluxDeviceType.PLUG) {
+            return 0x55FF55;
+        }
+        // Red for high-proportion output
+        if (type == FluxDeviceType.POINT && proportion >= 50) {
+            return 0xFF5555;
+        }
+        // Default white
+        return 0xFFFFFF;
     }
 
     private static void renderBoxOutline(VertexConsumer consumer, Matrix4f pose,

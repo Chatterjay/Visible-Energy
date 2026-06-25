@@ -19,7 +19,7 @@ public enum DeviceHighlightCache {
             devices.add(new DeviceHighlightInfo(
                     d.pos(), d.deviceTypeOrdinal(), d.deviceName(),
                     d.networkName(), d.networkColor(), d.energyStatus(),
-                    d.isCurrentNetwork(), now));
+                    d.isCurrentNetwork(), d.proportionPercent(), d.networkId(), now));
         }
     }
 

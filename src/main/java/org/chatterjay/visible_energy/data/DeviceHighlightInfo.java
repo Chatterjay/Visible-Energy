@@ -11,12 +11,14 @@ public class DeviceHighlightInfo {
     private final int networkColor;
     private final String energyStatus;
     private final boolean isCurrentNetwork;
+    private final int proportionPercent;
+    private final int networkId;
     private final long timestamp;
 
     public DeviceHighlightInfo(BlockPos pos, int deviceTypeOrdinal, String deviceName,
                                 String networkName, int networkColor,
                                 String energyStatus, boolean isCurrentNetwork,
-                                long timestamp) {
+                                int proportionPercent, int networkId, long timestamp) {
         this.pos = pos;
         this.deviceType = FluxDeviceType.values()[deviceTypeOrdinal];
         this.deviceName = deviceName;
@@ -24,6 +26,8 @@ public class DeviceHighlightInfo {
         this.networkColor = networkColor;
         this.energyStatus = energyStatus;
         this.isCurrentNetwork = isCurrentNetwork;
+        this.proportionPercent = proportionPercent;
+        this.networkId = networkId;
         this.timestamp = timestamp;
     }
 
@@ -34,6 +38,8 @@ public class DeviceHighlightInfo {
     public int getNetworkColor() { return networkColor; }
     public String getEnergyStatus() { return energyStatus; }
     public boolean isCurrentNetwork() { return isCurrentNetwork; }
+    public int getProportionPercent() { return proportionPercent; }
+    public int getNetworkId() { return networkId; }
 
     public boolean isExpired(int durationSeconds) {
         return System.currentTimeMillis() - timestamp > durationSeconds * 1000L;

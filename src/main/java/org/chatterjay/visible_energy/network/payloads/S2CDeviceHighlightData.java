@@ -21,7 +21,8 @@ public record S2CDeviceHighlightData(List<DeviceInfo> devices) implements Custom
 
     public record DeviceInfo(BlockPos pos, int deviceTypeOrdinal, String deviceName,
                              String networkName, int networkColor, String energyStatus,
-                             boolean isCurrentNetwork) {}
+                             boolean isCurrentNetwork, int proportionPercent,
+                             int networkId) {}
 
     public S2CDeviceHighlightData(FriendlyByteBuf buf) {
         this(readDevices(buf));
@@ -37,6 +38,8 @@ public record S2CDeviceHighlightData(List<DeviceInfo> devices) implements Custom
             buf.writeInt(d.networkColor());
             buf.writeUtf(d.energyStatus(), 50);
             buf.writeBoolean(d.isCurrentNetwork());
+            buf.writeVarInt(d.proportionPercent());
+            buf.writeVarInt(d.networkId());
         }
     }
 
@@ -51,8 +54,10 @@ public record S2CDeviceHighlightData(List<DeviceInfo> devices) implements Custom
             int color = buf.readInt();
             String energyStatus = buf.readUtf(50);
             boolean isCurrent = buf.readBoolean();
+            int proportion = buf.readVarInt();
+            int networkId = buf.readVarInt();
             list.add(new DeviceInfo(pos, typeOrdinal, deviceName, networkName, color, energyStatus,
-                    isCurrent));
+                    isCurrent, proportion, networkId));
         }
         return list;
     }
