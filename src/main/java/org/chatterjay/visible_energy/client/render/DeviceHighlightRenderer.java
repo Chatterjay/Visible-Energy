@@ -26,6 +26,8 @@ import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 import org.chatterjay.visible_energy.client.DeviceHighlightCache;
@@ -34,6 +36,7 @@ import org.joml.Matrix4f;
 
 import sonar.fluxnetworks.api.device.FluxDeviceType;
 
+@OnlyIn(Dist.CLIENT)
 public class DeviceHighlightRenderer {
 
     @SuppressWarnings("deprecation")

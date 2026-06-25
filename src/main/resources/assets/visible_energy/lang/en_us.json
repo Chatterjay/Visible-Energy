@@ -1,10 +1,13 @@
 {
-  "commands.visible_energy.scan.success": "Found %d Flux devices within %d blocks",
-  "commands.visible_energy.scan.none": "No Flux devices found within %d blocks",
+  "visible_energy.scan.success": "Scanning %d flux devices within %d blocks for %ds",
+  "visible_energy.scan.stop": "Stopped scanning.",
+  "visible_energy.scan.duration": "Display duration set to %ds",
+  "visible_energy.cross_dimension.header": "Cross-dimension devices on found networks:",
+  "visible_energy.cross_dimension.entry": "  %s at %s in %s [%s]",
+  "visible_energy.cross_dimension.loaded": "loaded",
+  "visible_energy.cross_dimension.unloaded": "unloaded",
   "config.visible_energy.scanRadius": "Scan Radius",
   "config.visible_energy.scanRadius.tooltip": "Radius in blocks to scan for Flux devices",
   "config.visible_energy.displayDuration": "Display Duration",
-  "config.visible_energy.displayDuration.tooltip": "Duration in seconds to display highlights",
-  "config.visible_energy.renderStyle": "Render Style",
-  "config.visible_energy.renderStyle.tooltip": "Highlight render style: OUTLINE, BEAM, or BOTH"
+  "config.visible_energy.displayDuration.tooltip": "Duration in seconds to display highlights"
 }

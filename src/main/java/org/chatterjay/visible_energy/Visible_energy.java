@@ -16,9 +16,8 @@ import org.chatterjay.visible_energy.config.VEConfig;
 import org.chatterjay.visible_energy.network.VENetwork;
 import org.slf4j.Logger;
 
-@Mod(Visible_energy.MODID)
+@Mod(VEConstants.MODID)
 public class Visible_energy {
-    public static final String MODID = "visible_energy";
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public Visible_energy(IEventBus modEventBus, ModContainer modContainer) {

@@ -23,10 +23,6 @@ public enum DeviceHighlightCache {
         }
     }
 
-    public void clear() {
-        devices.clear();
-    }
-
     public List<DeviceHighlightInfo> getActiveHighlights() {
         int duration = VEConfig.DISPLAY_DURATION.get();
         devices.removeIf(info -> info.isExpired(duration));

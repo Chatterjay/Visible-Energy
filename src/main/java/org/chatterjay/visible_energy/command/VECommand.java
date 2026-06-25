@@ -87,9 +87,8 @@ public class VECommand {
         int count = scanAndSend(player, radius);
 
         source.sendSuccess(
-                () -> Component.literal(
-                        "Scanning " + count + " Flux devices within " + radius
-                                + " blocks for " + duration + "s"),
+                () -> Component.translatable("visible_energy.scan.success",
+                        count, radius, duration),
                 false);
 
         reportCrossDimension(player, radius);
@@ -100,7 +99,7 @@ public class VECommand {
     private static int executeStop(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         ScanSessionTracker.INSTANCE.stopSession(player.getUUID());
-        source.sendSuccess(() -> Component.literal("Stopped scanning."), false);
+        source.sendSuccess(() -> Component.translatable("visible_energy.scan.stop"), false);
         return 1;
     }
 
@@ -109,7 +108,7 @@ public class VECommand {
         ServerPlayer player = source.getPlayerOrException();
         VEConfig.DISPLAY_DURATION.set(seconds);
         source.sendSuccess(
-                () -> Component.literal("Display duration set to " + seconds + "s"),
+                () -> Component.translatable("visible_energy.scan.duration", seconds),
                 false);
         return seconds;
     }
@@ -146,30 +145,28 @@ public class VECommand {
                         boolean loaded = dimLevel != null && dimLevel.hasChunk(p.getX() >> 4, p.getZ() >> 4);
                         String dimName = gp.dimension().location().toString();
 
-                        Component line = Component.literal("  ")
-                                .append(Component.literal(conn.getDeviceType().name())
-                                        .withStyle(ChatFormatting.GOLD))
-                                .append(Component.literal(" at ").withStyle(ChatFormatting.GRAY))
-                                .append(Component.literal(p.getX() + "," + p.getY() + "," + p.getZ())
-                                        .withStyle(ChatFormatting.AQUA))
-                                .append(Component.literal(" in ").withStyle(ChatFormatting.GRAY))
-                                .append(Component.literal(dimName)
-                                        .withStyle(ChatFormatting.GREEN))
-                                .append(Component.literal(" [")
-                                        .withStyle(ChatFormatting.GRAY))
-                                .append(Component.literal(loaded ? "loaded" : "unloaded")
-                                        .withStyle(loaded ? ChatFormatting.GREEN : ChatFormatting.RED))
-                                .append(Component.literal("]")
-                                        .withStyle(ChatFormatting.GRAY));
-                        alerts.add(line);
+                        Component deviceType = Component.literal(conn.getDeviceType().name())
+                                .withStyle(ChatFormatting.GOLD);
+                        Component coords = Component.literal(
+                                p.getX() + "," + p.getY() + "," + p.getZ())
+                                .withStyle(ChatFormatting.AQUA);
+                        Component dim = Component.literal(dimName)
+                                .withStyle(ChatFormatting.GREEN);
+                        Component status = Component.translatable(
+                                loaded ? "visible_energy.cross_dimension.loaded"
+                                        : "visible_energy.cross_dimension.unloaded")
+                                .withStyle(loaded ? ChatFormatting.GREEN : ChatFormatting.RED);
+                        alerts.add(Component.translatable(
+                                "visible_energy.cross_dimension.entry",
+                                deviceType, coords, dim, status));
                     }
                 });
             }
         }
 
         if (!alerts.isEmpty()) {
-            player.sendSystemMessage(Component.literal(
-                    "Cross-dimension devices on found networks:").withStyle(ChatFormatting.YELLOW));
+            player.sendSystemMessage(Component.translatable(
+                    "visible_energy.cross_dimension.header").withStyle(ChatFormatting.YELLOW));
             for (Component alert : alerts) {
                 player.sendSystemMessage(alert);
             }

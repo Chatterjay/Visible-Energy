@@ -24,10 +24,6 @@ public enum ScanSessionTracker {
         sessions.remove(uuid);
     }
 
-    public boolean hasSession(UUID uuid) {
-        return sessions.containsKey(uuid);
-    }
-
     public void onServerTick(MinecraftServer server) {
         if (sessions.isEmpty()) return;
 
