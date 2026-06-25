@@ -13,6 +13,7 @@ public class VEConfig {
         BUILDER.push("scanning");
         SCAN_RADIUS = BUILDER
                 .comment("Radius in blocks to scan for Flux devices")
+                .translation("visible_energy.config.scanning.scanRadius")
                 .defineInRange("scanRadius", 32, 5, 128);
         BUILDER.pop();
 

@@ -13,6 +13,7 @@ public class VEConfigClient {
         BUILDER.push("display");
         DISPLAY_DURATION = BUILDER
                 .comment("Duration in seconds to display highlights")
+                .translation("visible_energy.config.display.displayDuration")
                 .defineInRange("displayDuration", 30, 5, 300);
         BUILDER.pop();
 

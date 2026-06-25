@@ -1,12 +1,15 @@
 {
+  "visible_energy.configuration.title": "Visible Energy Config",
+  "visible_energy.configuration.scanning": "Scanning",
+  "visible_energy.configuration.display": "Display",
+  "visible_energy.config.scanning.scanRadius": "Scan Radius",
+  "visible_energy.config.scanning.scanRadius.tooltip": "Radius in blocks to scan for Flux devices",
+  "visible_energy.config.display.displayDuration": "Display Duration",
+  "visible_energy.config.display.displayDuration.tooltip": "Duration in seconds to display highlights",
   "visible_energy.scan.success": "Scanning %d flux devices within %d blocks for %ds",
   "visible_energy.scan.stop": "Stopped scanning.",
   "visible_energy.scan.duration": "Display duration set to %ds",
   "visible_energy.cross_dimension.header": "Cross-dimension devices on found networks:",
   "visible_energy.cross_dimension.loaded": "loaded",
-  "visible_energy.cross_dimension.unloaded": "unloaded",
-  "config.visible_energy.scanning.scanRadius": "Scan Radius",
-  "config.visible_energy.scanning.scanRadius.tooltip": "Radius in blocks to scan for Flux devices",
-  "config.visible_energy.display.displayDuration": "Display Duration",
-  "config.visible_energy.display.displayDuration.tooltip": "Duration in seconds to display highlights"
+  "visible_energy.cross_dimension.unloaded": "unloaded"
 }

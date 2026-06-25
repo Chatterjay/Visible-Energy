@@ -25,6 +25,10 @@ public class Visible_energy {
         modContainer.registerConfig(ModConfig.Type.COMMON, VEConfig.SPEC);
         modContainer.registerConfig(ModConfig.Type.CLIENT, VEConfigClient.SPEC);
 
+        if (net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT) {
+            registerConfigScreen(modContainer);
+        }
+
         modEventBus.addListener(FMLCommonSetupEvent.class, this::onCommonSetup);
         modEventBus.addListener(RegisterPayloadHandlersEvent.class,
                 (event) -> VENetwork.register(event));
@@ -33,6 +37,30 @@ public class Visible_energy {
                 (event) -> VECommand.register(event.getDispatcher()));
         NeoForge.EVENT_BUS.addListener(ServerTickEvent.Post.class,
                 (event) -> ScanSessionTracker.INSTANCE.onServerTick(event.getServer()));
+    }
+
+    private static void registerConfigScreen(ModContainer container) {
+        try {
+            Class<?> factoryClass = Class.forName("net.neoforged.neoforge.client.gui.IConfigScreenFactory");
+            Class<?> configScreenClass = Class.forName("net.neoforged.neoforge.client.gui.ConfigurationScreen");
+            Class<?> screenClass = Class.forName("net.minecraft.client.gui.screens.Screen");
+            var ctor = configScreenClass.getConstructor(ModContainer.class, screenClass);
+            var regMethod = ModContainer.class.getMethod("registerExtensionPoint", Class.class, java.util.function.Supplier.class);
+
+            Object factory = java.lang.reflect.Proxy.newProxyInstance(
+                    factoryClass.getClassLoader(),
+                    new Class<?>[]{factoryClass},
+                    (_proxy, method, args) -> {
+                        if ("createScreen".equals(method.getName()) && args != null && args.length == 2) {
+                            return ctor.newInstance(container, args[1]);
+                        }
+                        return null;
+                    }
+            );
+            regMethod.invoke(container, factoryClass, (java.util.function.Supplier<?>) () -> factory);
+        } catch (Exception e) {
+            LOGGER.warn("Failed to register config screen", e);
+        }
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event) {
