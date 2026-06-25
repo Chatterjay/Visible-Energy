@@ -8,7 +8,9 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import org.chatterjay.visible_energy.command.ScanSessionTracker;
 import org.chatterjay.visible_energy.command.VECommand;
 import org.chatterjay.visible_energy.config.VEConfig;
 import org.chatterjay.visible_energy.network.VENetwork;
@@ -28,6 +30,8 @@ public class Visible_energy {
 
         NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class,
                 (event) -> VECommand.register(event.getDispatcher()));
+        NeoForge.EVENT_BUS.addListener(ServerTickEvent.Post.class,
+                (event) -> ScanSessionTracker.INSTANCE.onServerTick(event.getServer()));
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event) {

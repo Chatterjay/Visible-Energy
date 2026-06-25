@@ -16,6 +16,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
@@ -104,9 +107,12 @@ public class DeviceHighlightRenderer {
         }
         bufferSource.endBatch(RenderType.lines());
 
-        // Pass 3: text labels
+        // Pass 3: text labels (deduplicate by position per frame)
+        Set<BlockPos> labeledPositions = new HashSet<>();
         for (DeviceHighlightInfo info : highlights) {
-            renderLabel(poseStack, font, bufferSource, camera, info);
+            if (labeledPositions.add(info.getPos())) {
+                renderLabel(poseStack, font, bufferSource, camera, info);
+            }
         }
         bufferSource.endBatch();
 
@@ -118,9 +124,8 @@ public class DeviceHighlightRenderer {
                                      MultiBufferSource.BufferSource bufferSource,
                                      Camera camera, DeviceHighlightInfo info) {
         BlockPos pos = info.getPos();
-        int rgb = info.getNetworkColor();
         int alpha = info.isCurrentNetwork() ? 0xFF : 0xCC;
-        int textColor = (alpha << 24) | rgb;
+        int textColor = (alpha << 24) | 0xFFFFFF;
 
         String line1 = info.getDeviceName() + (info.isCurrentNetwork() ? " *" : "");
         String line2 = info.getNetworkName() + " | " + info.getEnergyStatus();
