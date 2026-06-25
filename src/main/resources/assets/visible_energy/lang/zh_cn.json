@@ -8,6 +8,7 @@
   "visible_energy.config.display.displayDuration.tooltip": "高亮显示的持续时间（秒）",
   "visible_energy.scan.success": "扫描到 %d 个 Flux 设备（半径 %d 格，显示 %ds）",
   "visible_energy.scan.stop": "已停止扫描。",
+  "visible_energy.scan.clear": "高亮已清除。",
   "visible_energy.scan.duration": "显示时长已设为 %ds",
   "visible_energy.cross_dimension.header": "发现以下网络设备位于其他维度：",
   "visible_energy.cross_dimension.loaded": "已加载",

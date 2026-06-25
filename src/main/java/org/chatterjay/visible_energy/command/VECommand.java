@@ -53,6 +53,8 @@ public class VECommand {
                                         IntegerArgumentType.getInteger(ctx, "radius")))))
                 .then(Commands.literal("stop")
                         .executes(ctx -> executeStop(ctx.getSource())))
+                .then(Commands.literal("clear")
+                        .executes(ctx -> executeClear(ctx.getSource())))
                 .then(Commands.literal("duration")
                         .then(Commands.argument("seconds",
                                 IntegerArgumentType.integer(1, 3600))
@@ -71,6 +73,8 @@ public class VECommand {
                                         IntegerArgumentType.getInteger(ctx, "radius")))))
                 .then(Commands.literal("stop")
                         .executes(ctx -> executeStop(ctx.getSource())))
+                .then(Commands.literal("clear")
+                        .executes(ctx -> executeClear(ctx.getSource())))
                 .then(Commands.literal("duration")
                         .then(Commands.argument("seconds",
                                 IntegerArgumentType.integer(1, 3600))
@@ -101,6 +105,14 @@ public class VECommand {
         ServerPlayer player = source.getPlayerOrException();
         ScanSessionTracker.INSTANCE.stopSession(player.getUUID());
         source.sendSuccess(() -> Component.translatable("visible_energy.scan.stop"), false);
+        return 1;
+    }
+
+    private static int executeClear(CommandSourceStack source) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        ScanSessionTracker.INSTANCE.stopSession(player.getUUID());
+        PacketDistributor.sendToPlayer(player, new S2CDeviceHighlightData(List.of()));
+        source.sendSuccess(() -> Component.translatable("visible_energy.scan.clear"), false);
         return 1;
     }
 

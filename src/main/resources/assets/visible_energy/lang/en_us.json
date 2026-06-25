@@ -8,6 +8,7 @@
   "visible_energy.config.display.displayDuration.tooltip": "Duration in seconds to display highlights",
   "visible_energy.scan.success": "Scanning %d flux devices within %d blocks for %ds",
   "visible_energy.scan.stop": "Stopped scanning.",
+  "visible_energy.scan.clear": "Highlights cleared.",
   "visible_energy.scan.duration": "Display duration set to %ds",
   "visible_energy.cross_dimension.header": "Cross-dimension devices on found networks:",
   "visible_energy.cross_dimension.loaded": "loaded",
