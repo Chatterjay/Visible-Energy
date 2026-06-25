@@ -26,6 +26,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import org.chatterjay.visible_energy.config.VEConfig;
+import org.chatterjay.visible_energy.config.VEConfigClient;
 import org.chatterjay.visible_energy.network.payloads.S2CDeviceHighlightData;
 import org.chatterjay.visible_energy.network.payloads.S2CDeviceHighlightData.DeviceInfo;
 
@@ -81,7 +82,7 @@ public class VECommand {
 
     private static int executeScan(CommandSourceStack source, int radius) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
-        int duration = VEConfig.DISPLAY_DURATION.get();
+        int duration = VEConfigClient.DISPLAY_DURATION.get();
         ScanSessionTracker.INSTANCE.startSession(player, radius, duration);
 
         int count = scanAndSend(player, radius);
@@ -106,7 +107,7 @@ public class VECommand {
     private static int executeDuration(CommandSourceStack source, int seconds)
             throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
-        VEConfig.DISPLAY_DURATION.set(seconds);
+        VEConfigClient.DISPLAY_DURATION.set(seconds);
         source.sendSuccess(
                 () -> Component.translatable("visible_energy.scan.duration", seconds),
                 false);

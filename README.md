@@ -33,9 +33,3 @@
 - NeoForge 21.1.234+
 - FluxNetworks 8.0.0+
 
-## 安装
-
-1. 安装 Minecraft 1.21.1 和对应版本的 NeoForge
-2. 将 FluxNetworks-1.21.1-8.0.0.jar 放入 `mods` 目录
-3. 将 Visible Energy 的 jar 放入 `mods` 目录
-4. 启动游戏

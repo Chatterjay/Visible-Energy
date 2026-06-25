@@ -13,6 +13,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.chatterjay.visible_energy.command.ScanSessionTracker;
 import org.chatterjay.visible_energy.command.VECommand;
 import org.chatterjay.visible_energy.config.VEConfig;
+import org.chatterjay.visible_energy.config.VEConfigClient;
 import org.chatterjay.visible_energy.network.VENetwork;
 import org.slf4j.Logger;
 
@@ -22,6 +23,7 @@ public class Visible_energy {
 
     public Visible_energy(IEventBus modEventBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.COMMON, VEConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, VEConfigClient.SPEC);
 
         modEventBus.addListener(FMLCommonSetupEvent.class, this::onCommonSetup);
         modEventBus.addListener(RegisterPayloadHandlersEvent.class,

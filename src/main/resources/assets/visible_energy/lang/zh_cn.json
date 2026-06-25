@@ -5,8 +5,8 @@
   "visible_energy.cross_dimension.header": "发现以下网络设备位于其他维度：",
   "visible_energy.cross_dimension.loaded": "已加载",
   "visible_energy.cross_dimension.unloaded": "未加载",
-  "config.visible_energy.scanRadius": "扫描半径",
-  "config.visible_energy.scanRadius.tooltip": "扫描 Flux 设备的半径（格）",
-  "config.visible_energy.displayDuration": "显示时长",
-  "config.visible_energy.displayDuration.tooltip": "高亮显示的持续时间（秒）"
+  "config.visible_energy.scanning.scanRadius": "扫描半径",
+  "config.visible_energy.scanning.scanRadius.tooltip": "扫描 Flux 设备的半径（格）",
+  "config.visible_energy.display.displayDuration": "显示时长",
+  "config.visible_energy.display.displayDuration.tooltip": "高亮显示的持续时间（秒）"
 }

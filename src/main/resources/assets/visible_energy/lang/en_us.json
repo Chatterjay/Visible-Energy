@@ -3,11 +3,10 @@
   "visible_energy.scan.stop": "Stopped scanning.",
   "visible_energy.scan.duration": "Display duration set to %ds",
   "visible_energy.cross_dimension.header": "Cross-dimension devices on found networks:",
-  "visible_energy.cross_dimension.entry": "  %s at %s in %s [%s]",
   "visible_energy.cross_dimension.loaded": "loaded",
   "visible_energy.cross_dimension.unloaded": "unloaded",
-  "config.visible_energy.scanRadius": "Scan Radius",
-  "config.visible_energy.scanRadius.tooltip": "Radius in blocks to scan for Flux devices",
-  "config.visible_energy.displayDuration": "Display Duration",
-  "config.visible_energy.displayDuration.tooltip": "Duration in seconds to display highlights"
+  "config.visible_energy.scanning.scanRadius": "Scan Radius",
+  "config.visible_energy.scanning.scanRadius.tooltip": "Radius in blocks to scan for Flux devices",
+  "config.visible_energy.display.displayDuration": "Display Duration",
+  "config.visible_energy.display.displayDuration.tooltip": "Duration in seconds to display highlights"
 }
