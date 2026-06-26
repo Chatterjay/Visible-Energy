@@ -1,0 +1,23 @@
+{
+  "visible_energy.configuration.title": "Visible Energy Config",
+  "visible_energy.configuration.scanning": "Scanning",
+  "visible_energy.configuration.display": "Display",
+  "visible_energy.config.scanning.scanRadius": "Scan Radius",
+  "visible_energy.config.scanning.scanRadius.tooltip": "Radius in blocks to scan for Flux devices",
+  "visible_energy.config.display.displayDuration": "Display Duration",
+  "visible_energy.config.display.displayDuration.tooltip": "Duration in seconds to display highlights",
+  "visible_energy.configuration.debounce": "Debounce",
+  "visible_energy.config.debounce.smoothing": "Smoothing Factor",
+  "visible_energy.config.debounce.smoothing.tooltip": "EMA smoothing factor for energy proportion (0 = no smoothing, 1 = instant)",
+  "visible_energy.config.debounce.threshold": "Update Threshold",
+  "visible_energy.config.debounce.threshold.tooltip": "Minimum proportion change (%) to update energy status text",
+  "visible_energy.config.debounce.maxMissed": "Max Missed Scans",
+  "visible_energy.config.debounce.maxMissed.tooltip": "Consecutive missed scans before removing a device",
+  "visible_energy.scan.success": "Scanning %d flux devices within %d blocks for %ds",
+  "visible_energy.scan.stop": "Stopped scanning.",
+  "visible_energy.scan.clear": "Highlights cleared.",
+  "visible_energy.scan.duration": "Display duration set to %ds",
+  "visible_energy.cross_dimension.header": "Cross-dimension devices on found networks:",
+  "visible_energy.cross_dimension.loaded": "loaded",
+  "visible_energy.cross_dimension.unloaded": "unloaded"
+}
