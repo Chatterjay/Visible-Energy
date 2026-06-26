@@ -48,7 +48,7 @@ public class VECommand {
                 .then(Commands.literal("scan")
                         .executes(ctx -> executeScan(ctx.getSource(), VEConfig.SCAN_RADIUS.get()))
                         .then(Commands.argument("radius",
-                                IntegerArgumentType.integer(5, 128))
+                                IntegerArgumentType.integer(5, 256))
                                 .executes(ctx -> executeScan(ctx.getSource(),
                                         IntegerArgumentType.getInteger(ctx, "radius")))))
                 .then(Commands.literal("stop")
@@ -68,7 +68,7 @@ public class VECommand {
                 .then(Commands.literal("scan")
                         .executes(ctx -> executeScan(ctx.getSource(), VEConfig.SCAN_RADIUS.get()))
                         .then(Commands.argument("radius",
-                                IntegerArgumentType.integer(5, 128))
+                                IntegerArgumentType.integer(5, 256))
                                 .executes(ctx -> executeScan(ctx.getSource(),
                                         IntegerArgumentType.getInteger(ctx, "radius")))))
                 .then(Commands.literal("stop")

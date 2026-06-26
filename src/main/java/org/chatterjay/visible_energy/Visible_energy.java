@@ -45,18 +45,23 @@ public class Visible_energy {
             Class<?> configScreenClass = Class.forName("net.neoforged.neoforge.client.gui.ConfigurationScreen");
             Class<?> screenClass = Class.forName("net.minecraft.client.gui.screens.Screen");
             var ctor = configScreenClass.getConstructor(ModContainer.class, screenClass);
-            var regMethod = ModContainer.class.getMethod("registerExtensionPoint", Class.class, java.util.function.Supplier.class);
 
             Object factory = java.lang.reflect.Proxy.newProxyInstance(
                     factoryClass.getClassLoader(),
                     new Class<?>[]{factoryClass},
                     (_proxy, method, args) -> {
-                        if ("createScreen".equals(method.getName()) && args != null && args.length == 2) {
+                        String name = method.getName();
+                        if ("createScreen".equals(name) && args != null && args.length == 2) {
                             return ctor.newInstance(container, args[1]);
                         }
+                        if ("toString".equals(name)) return "ConfigScreenFactory";
+                        if ("hashCode".equals(name)) return System.identityHashCode(_proxy);
+                        if ("equals".equals(name) && args != null && args.length == 1) return _proxy == args[0];
                         return null;
                     }
             );
+
+            var regMethod = ModContainer.class.getMethod("registerExtensionPoint", Class.class, java.util.function.Supplier.class);
             regMethod.invoke(container, factoryClass, (java.util.function.Supplier<?>) () -> factory);
         } catch (Exception e) {
             LOGGER.warn("Failed to register config screen", e);
