@@ -301,28 +301,29 @@ public class VECommand {
                                                     int proportion) {
         if (stats == null) return "---";
 
-        long deviceChange = Math.abs(device.getTransferChange());
         FluxDeviceType type = device.getDeviceType();
         StringBuilder sb = new StringBuilder();
 
         if (type == FluxDeviceType.PLUG) {
+            long deviceRate = proportion > 0 ? stats.energyInput * proportion / 100 : stats.energyInput;
             sb.append("↑ ");
-            sb.append(compactEnergy(deviceChange)).append("/t");
+            sb.append(compactEnergy(deviceRate)).append("/t");
             if (proportion > 0) sb.append(" (").append(proportion).append("%)");
         } else if (type == FluxDeviceType.POINT) {
-            sb.append(compactEnergy(deviceChange)).append("/t ↓");
+            long deviceRate = proportion > 0 ? stats.energyOutput * proportion / 100 : stats.energyOutput;
+            sb.append(compactEnergy(deviceRate)).append("/t ↓");
             if (proportion > 0) sb.append(" (").append(proportion).append("%)");
         } else if (type == FluxDeviceType.STORAGE) {
             long change = device.getTransferChange();
             if (change > 0) {
-                sb.append("↑ ").append(compactEnergy(change)).append("/t in");
+                sb.append("↑ ").append(compactEnergy(Math.abs(change))).append("/t in");
             } else if (change < 0) {
-                sb.append(compactEnergy(-change)).append("/t ↓ out");
+                sb.append(compactEnergy(Math.abs(change))).append("/t ↓ out");
             } else {
                 sb.append("0 FE/t");
             }
         } else {
-            sb.append(compactEnergy(deviceChange)).append("/t");
+            sb.append(compactEnergy(Math.abs(device.getTransferChange()))).append("/t");
         }
 
         if (stats.totalEnergy > 0) {

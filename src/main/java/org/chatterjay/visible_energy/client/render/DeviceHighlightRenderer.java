@@ -8,6 +8,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -16,13 +23,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
@@ -87,7 +87,15 @@ public class DeviceHighlightRenderer {
 
         PoseStack.Pose poseEntry = poseStack.last();
 
-        // Pass 1: colored fill overlay (additive blend, no depth test)
+        // Pass 1: text labels first (before custom render types, matching SFM pattern)
+        Set<BlockPos> labeledPositions = new HashSet<>();
+        for (DeviceHighlightInfo info : highlights) {
+            if (labeledPositions.add(info.getPos())) {
+                renderLabel(poseStack, font, bufferSource, camera, info);
+            }
+        }
+
+        // Pass 2: colored fill overlay (additive blend, no depth test)
         OVERLAY_NO_DEPTH.setupRenderState();
         VertexConsumer fillConsumer = bufferSource.getBuffer(OVERLAY_NO_DEPTH);
         for (DeviceHighlightInfo info : highlights) {
@@ -102,7 +110,7 @@ public class DeviceHighlightRenderer {
         bufferSource.endBatch(OVERLAY_NO_DEPTH);
         OVERLAY_NO_DEPTH.clearRenderState();
 
-        // Pass 2: line outline
+        // Pass 3: line outline + network connection lines
         VertexConsumer lineConsumer = bufferSource.getBuffer(RenderType.lines());
         for (DeviceHighlightInfo info : highlights) {
             BlockPos pos = info.getPos();
@@ -113,9 +121,7 @@ public class DeviceHighlightRenderer {
             int a = info.isCurrentNetwork() ? 220 : 120;
             renderBoxOutline(lineConsumer, poseEntry, pos, r, g, b, a);
         }
-        bufferSource.endBatch(RenderType.lines());
 
-        // Pass 2.5: network connection lines (PLUG → other devices only)
         Map<Integer, List<BlockPos>> plugsByNetwork = new HashMap<>();
         Map<Integer, List<BlockPos>> othersByNetwork = new HashMap<>();
         Map<Integer, Integer> networkColors = new HashMap<>();
@@ -128,7 +134,6 @@ public class DeviceHighlightRenderer {
                 othersByNetwork.computeIfAbsent(netId, k -> new ArrayList<>()).add(info.getPos());
             }
         }
-        VertexConsumer netLineConsumer = bufferSource.getBuffer(RenderType.lines());
         for (int netId : plugsByNetwork.keySet()) {
             List<BlockPos> plugs = plugsByNetwork.get(netId);
             List<BlockPos> others = othersByNetwork.get(netId);
@@ -140,7 +145,7 @@ public class DeviceHighlightRenderer {
             int la = 140;
             for (BlockPos plugPos : plugs) {
                 for (BlockPos otherPos : others) {
-                    line(netLineConsumer, poseEntry,
+                    line(lineConsumer, poseEntry,
                             plugPos.getX() + 0.5f, plugPos.getY() + 0.5f, plugPos.getZ() + 0.5f,
                             otherPos.getX() + 0.5f, otherPos.getY() + 0.5f, otherPos.getZ() + 0.5f,
                             lr / 255f, lg / 255f, lb / 255f, la / 255f);
@@ -149,13 +154,7 @@ public class DeviceHighlightRenderer {
         }
         bufferSource.endBatch(RenderType.lines());
 
-        // Pass 3: text labels (deduplicate by position per frame)
-        Set<BlockPos> labeledPositions = new HashSet<>();
-        for (DeviceHighlightInfo info : highlights) {
-            if (labeledPositions.add(info.getPos())) {
-                renderLabel(poseStack, font, bufferSource, camera, info);
-            }
-        }
+        // Flush text labels
         bufferSource.endBatch();
 
         poseStack.popPose();
@@ -176,7 +175,6 @@ public class DeviceHighlightRenderer {
         poseStack.pushPose();
         poseStack.translate(pos.getX() + 0.5, pos.getY() + 2.2, pos.getZ() + 0.5);
         poseStack.mulPose(camera.rotation());
-        poseStack.mulPose(Axis.YP.rotationDegrees(180));
         poseStack.scale(-0.025f, -0.025f, 0.025f);
 
         Matrix4f matrix = poseStack.last().pose();
@@ -247,17 +245,17 @@ public class DeviceHighlightRenderer {
                                float x1, float y1, float z1, float x2, float y2, float z2,
                                float x3, float y3, float z3, float x4, float y4, float z4,
                                int r, int g, int b, int a) {
-        consumer.vertex(pose.pose(), x1, y1, z1).color(r, g, b, a);
-        consumer.vertex(pose.pose(), x2, y2, z2).color(r, g, b, a);
-        consumer.vertex(pose.pose(), x3, y3, z3).color(r, g, b, a);
-        consumer.vertex(pose.pose(), x4, y4, z4).color(r, g, b, a);
+        consumer.vertex(pose.pose(), x1, y1, z1).color(r, g, b, a).endVertex();
+        consumer.vertex(pose.pose(), x2, y2, z2).color(r, g, b, a).endVertex();
+        consumer.vertex(pose.pose(), x3, y3, z3).color(r, g, b, a).endVertex();
+        consumer.vertex(pose.pose(), x4, y4, z4).color(r, g, b, a).endVertex();
     }
 
     private static void line(VertexConsumer consumer, PoseStack.Pose pose,
                               float x1, float y1, float z1,
                               float x2, float y2, float z2,
                               float r, float g, float b, float a) {
-        consumer.vertex(pose.pose(), x1, y1, z1).color(r, g, b, a).normal(0f, 1f, 0f);
-        consumer.vertex(pose.pose(), x2, y2, z2).color(r, g, b, a).normal(0f, 1f, 0f);
+        consumer.vertex(pose.pose(), x1, y1, z1).color(r, g, b, a).normal(0f, 1f, 0f).endVertex();
+        consumer.vertex(pose.pose(), x2, y2, z2).color(r, g, b, a).normal(0f, 1f, 0f).endVertex();
     }
 }

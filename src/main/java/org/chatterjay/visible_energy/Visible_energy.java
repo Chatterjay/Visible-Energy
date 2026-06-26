@@ -32,7 +32,6 @@ public class Visible_energy {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, VEConfigClient.SPEC);
 
         if (FMLLoader.getDist() == Dist.CLIENT) {
-            registerConfigScreen();
             VEClientSetup.init();
         }
 
@@ -53,15 +52,4 @@ public class Visible_energy {
         LOGGER.info("Visible Energy initialized");
     }
 
-    private static void registerConfigScreen() {
-        try {
-            var screenFactory = new net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory(
-                    (mc, modsScreen) -> modsScreen);
-            ModLoadingContext.get().registerExtensionPoint(
-                    net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory.class,
-                    () -> screenFactory);
-        } catch (Exception e) {
-            LOGGER.warn("Failed to register config screen", e);
-        }
-    }
 }

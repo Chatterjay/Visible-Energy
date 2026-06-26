@@ -95,13 +95,15 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation fg.deobf("blank:FluxNetworks:1.20.1-7.2.1.15") {
+    implementation fg.deobf("blank:FluxNetworks:${FluxNetworks_version}") {
         transitive = false
     }
-    implementation fg.deobf("curse.maven:mekanism-268560:6552911")
-    implementation fg.deobf("curse.maven:mekanism-generators-268566:6552914")
-    implementation fg.deobf("curse.maven:mekanism-advancedgenerators-844063:5138626")
-    implementation fg.deobf("curse.maven:jei-238222:8292131")
+    implementation "maven.modrinth:cloth-config:${cloth_config_version}"
+    runtimeOnly fg.deobf("curse.maven:mekanism-268560:6552911")
+    runtimeOnly fg.deobf("curse.maven:mekanism-generators-268566:6552914")
+    runtimeOnly fg.deobf("curse.maven:mekanism-advancedgenerators-844063:5138626")
+    runtimeOnly fg.deobf("curse.maven:jei-238222:8292131")
+
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -112,6 +114,7 @@ tasks.named('processResources', ProcessResources).configure {
                              mod_authors         : mod_authors, mod_description: mod_description,]
 
     inputs.properties replaceProperties
+    filteringCharset = 'UTF-8'
 
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
         expand replaceProperties + [project: project]

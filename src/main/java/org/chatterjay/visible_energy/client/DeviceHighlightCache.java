@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.minecraft.core.BlockPos;
+
 import org.chatterjay.visible_energy.config.VEConfigClient;
 import org.chatterjay.visible_energy.data.DeviceHighlightInfo;
 import org.chatterjay.visible_energy.network.payloads.S2CDeviceHighlightData.DeviceInfo;
-
-import net.minecraft.core.BlockPos;
 
 public enum DeviceHighlightCache {
     INSTANCE;
@@ -109,15 +109,12 @@ public enum DeviceHighlightCache {
 
             int rawProportion = info.proportionPercent();
 
-            if (!info.energyStatus().equals(this.energyStatus)) {
-                this.energyStatus = info.energyStatus();
-            }
-
             double smoothing = VEConfigClient.DEBOUNCE_SMOOTHING.get();
             this.smoothedProportion = (int) Math.round(
                     smoothedProportion * (1.0 - smoothing) + rawProportion * smoothing);
 
-            if (Math.abs(rawProportion - this.smoothedProportion) > VEConfigClient.DEBOUNCE_THRESHOLD.get()) {
+            if (Math.abs(rawProportion - this.smoothedProportion) > VEConfigClient.DEBOUNCE_THRESHOLD.get()
+                    || !info.energyStatus().equals(this.energyStatus)) {
                 this.energyStatus = info.energyStatus();
             }
         }
